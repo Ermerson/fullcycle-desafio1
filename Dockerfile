@@ -1,11 +1,11 @@
-FROM golang:latest
+FROM golang:1.16-alpine AS builder
 
 WORKDIR /app
+COPY . .
+RUN go build -o myapp
 
-COPY go.mod ./
-RUN go mod download
-COPY *.go ./
+FROM alpine:latest
+WORKDIR /app
+COPY --from=builder /app/myapp .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /desafio-1
-
-CMD ["/desafio-1"]
+CMD ["./myapp"]
